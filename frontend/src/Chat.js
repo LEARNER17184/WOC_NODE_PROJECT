@@ -1,8 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import './App.css'
-import {App} from './App'
 import ScrolltoBottom from 'react-scroll-to-bottom'
-import { RoomContext } from './Context';
 import { useNavigate } from 'react-router-dom';
 
 function Chat({room,username,socket,setShowChat,showChat}) {
@@ -40,29 +38,27 @@ function Chat({room,username,socket,setShowChat,showChat}) {
     }, [socket]);
 
 
-    // console.log(username)
-
     return (
         <>
         <div style={{ display: 'flex', flexDirection: 'row', height: '99vh' }}>
-            <div style={{ background: 'blue', minWidth: '20vw', minHeight: '100.15%' }}>
-                <div style={{ color: 'black', background: 'yellow', minWidth: '18vw', minHeight: '64%', borderRadius: '5px', marginLeft: '0.5vw', marginRight: '0.5vw', marginTop: '0.5vh', marginBottom: '0.5vh', borderColor: 'black' }}>
-                    <h3>{username}</h3>
+            <div style={{ background: 'rgb(241, 235, 235)', minWidth: '20vw', minHeight: '100.15%' }}>
+                <div style={{ justifyContent:'center', color: 'black', background: '#f3d9a2', minWidth: '18vw', minHeight: '64%', borderRadius: '5px', marginLeft: '0.5vw', marginRight: '0.5vw', marginTop: '0.5vh', marginBottom: '0.5vh', borderColor: 'black' }}>
+                    <h3>Username: {username}</h3>
                 </div>
-                <div style={{ background: 'orange', minWidth: '16vw', minHeight: '33%', justifyContent: 'center', alignContent: 'center' }}>
+                <div style={{ background: 'rgb(241, 235, 235)', minWidth: '16vw', minHeight: '33%', justifyContent: 'center', alignContent: 'center' }}>
                     <button onClick style={{ marginLeft: '2vw', marginRight: '2vw', marginTop: '2vh', marginBottom: '2vh' }}> Start</button>
                     <button onClick style={{ marginLeft: '2vw', marginRight: '2vw', marginTop: '2vh', marginBottom: '2vh' }}> Room ID: {room}</button>
                     <button onClick={Changed} style={{ marginLeft: '2vw', marginRight: '2vw', marginTop: '2vh', marginBottom: '2vh' }}> Leave</button>
                 </div>
             </div>
-            <div style={{ background: 'green', minWidth: '51vw', minHeight: '100.25%', marginBottom:'50px' }}>
-                <div style={{ background: 'purple', minWidth: '49vw', minHeight: '8%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
+            <div style={{ background: 'rgb(241, 235, 235)', minWidth: '51vw', minHeight: '100.25%', marginBottom:'50px' }}>
+                <div style={{ background: 'rgb(199, 240, 236)', minWidth: '49vw', minHeight: '8%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
 
                 </div>
-                <div style={{ background: 'black', minWidth: '49vw', minHeight: '58%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
+                <div style={{ background: 'white', minWidth: '49vw', minHeight: '58%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
 
                 </div>
-                <div style={{ background: 'blue', minWidth: '49vw', minHeight: '28%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
+                <div style={{ background: 'rgb(199, 240, 236)', minWidth: '49vw', minHeight: '28%', borderRadius: '5px', marginLeft: '1vw', marginRight: '1vw', marginTop: '1vh', marginBottom: '1vh', borderColor: 'black' }}>
 
                 </div>
             </div>
@@ -98,41 +94,3 @@ function Chat({room,username,socket,setShowChat,showChat}) {
 }
 
 export default Chat
-
-
-
-
-
-
-
-// //style={{background:'blue',borderRadius: '5px',marginLeft:'1vw',marginRight:'1vw',marginTop:'1vh',marginBottom:'1vh',minWidth:'27vw',minHeight:'98vh',borderColor: 'black'}}
-
-// import { useState, useContext } from 'react';
-// import ScrollToBottom from 'react-scroll-to-bottom';
-// import { RoomContext } from './Context';
-// import { useNavigate } from 'react-router-dom';
-
-// function Chat({room,username,socket}) {
-// //   const room = useContext(RoomContext);
-// //   console.log(`Print room ${room}`);
-
-//   const [messageList, setMessageList] = useState([]);
-//   const [currentMessage, setCurrentMessage] = useState('');
-
-//   const navigate = useNavigate();
-
-//   const changed = () => {
-//     navigate('/');
-//   };
-
-//   return (
-//     <>
-//       <div style={{ display: 'flex', flexDirection: 'row', height: '99vh' }}>
-//         {/* ... rest of your code */}
-//         <button onClick={() => console.log(`button ${room}`)}>Hello </button>
-//       </div>
-//     </>
-//   );
-// }
-
-// export default Chat;

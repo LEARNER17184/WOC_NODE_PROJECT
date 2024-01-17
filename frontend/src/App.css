@@ -93,7 +93,7 @@ button {
 
 .title-word-4 {
   --color-1: #3D8DAE;
-  --color-2: #DF8453;
+  --color-2: #c87548;
   --color-3: #E4A9A8;
 }
 
@@ -261,4 +261,14 @@ button {
 }
 .hide {
   opacity: 0 !important;
+}
+
+
+.coommmmon {
+  color: rgb(199, 240, 236);
+  background: #eec9c9;
+  --color-1: #fad6e5;
+  --color-2: #d7f6f2;
+  --color-3: #4fb7bf;
+  --color-4: #f9eae2;
 }
