@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function Chat({room,username,socket,setShowChat,showChat}) {
     const [messageList, setMessageList] = useState([])
     const [currentMessage, setcurrentMessage] = useState('')
+    const [userList, setUserList] = useState([]);
 
     const sendMessage = async () => {
         if (currentMessage !== '') {
@@ -25,25 +26,37 @@ function Chat({room,username,socket,setShowChat,showChat}) {
     const navigate = useNavigate()
 
     const Changed = () => {
+        socket.emit('leave_room', { room, username });
         setShowChat(!showChat)
         navigate('/')
     }
 
     useEffect(() => {
-        
         socket.on('recieve_msg', (data) => {
             setMessageList((list) => [...list, data])
         });
-        return ()=>socket.removeListener('recieve_msg')
-    }, [socket]);
 
+        socket.on('update_user_list', (userList) => {
+            setUserList(userList);
+        });
+
+        return ()=>{
+            socket.removeListener('recieve_msg')
+            socket.removeListener('update_user_list')
+        }
+    }, [socket]);
 
     return (
         <>
         <div style={{ display: 'flex', flexDirection: 'row', height: '99vh' }}>
             <div style={{ background: 'rgb(241, 235, 235)', minWidth: '20vw', minHeight: '100.15%' }}>
                 <div style={{ justifyContent:'center', color: 'black', background: '#f3d9a2', minWidth: '18vw', minHeight: '64%', borderRadius: '5px', marginLeft: '0.5vw', marginRight: '0.5vw', marginTop: '0.5vh', marginBottom: '0.5vh', borderColor: 'black' }}>
-                    <h3>Username: {username}</h3>
+                    <h3>Players:</h3>
+                    {userList.map((user) => (
+                        <ul>
+                        <li><h4 key={user} marginLeft='5px'>{user}</h4></li>
+                        </ul>
+                    ))}
                 </div>
                 <div style={{ background: 'rgb(241, 235, 235)', minWidth: '16vw', minHeight: '33%', justifyContent: 'center', alignContent: 'center' }}>
                     <button onClick style={{ marginLeft: '2vw', marginRight: '2vw', marginTop: '2vh', marginBottom: '2vh' }}> Start</button>

@@ -20,22 +20,24 @@ function App({navigation}) {
   const joinRoom = () => {
     if(userName !== '' && room !== '') {
       console.log(room)
-      socket.emit('join_room',room)
+      const data={
+        room: room,
+        username: userName
+      }
+      socket.emit('join_room',data)
       setShowChat(true)
     }
   }
-
-  const randomNumberInRange = (min, max) => {
-    return Math.floor(Math.random()
-        * (max - min + 1)) + min;
-  };
 
   const createRoom = () => {
     if (userName !== '') {
       const newRoom = Math.floor(Math.random() * 100).toString();
       setRoom(newRoom);
-      
-      socket.emit('join_room', newRoom);
+      const data={
+        room: newRoom,
+        username: userName
+      }
+      socket.emit('join_room', data);
 
       setShowChat(true);
     }
@@ -55,8 +57,6 @@ function App({navigation}) {
             </h2>
           </div>
         </div> 
-      {/* <div className="App">  
-        {/* <h1>DRAW YOUR WAY OUT</h1> */}
       <div className='joinChatContainer'>
         <Card style={{justifyContent: "center",
         alignItems: "center", paddingBottom: '10px'}}>

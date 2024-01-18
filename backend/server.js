@@ -15,23 +15,42 @@ const io = new Server(server, {
     }
 })
 
-io.on('connection',(socket) => {
+const roomUsernames = {};
 
-    console.log(`User connected ${socket.id}`)
 
-    socket.on('join_room',(data) => {
-        socket.join(data)
-        console.log(`User ${socket.id} joined room ${data}`)
-    })
+io.on('connection', (socket) => {
+    console.log(`User connected ${socket.id}`);
 
-    socket.on('send_msg',(data) => {
-        socket.to(data.room).emit('recieve_msg',data)
-    })
+    socket.on('join_room', (data) => {
+        socket.join(data.room);
+        console.log(`User ${socket.id} joined room ${data.room}`);
 
-    socket.on('disconnect',() => {
-        console.log('user disconnected', socket.id)
-    })
-})
+        if (!roomUsernames[data.room]) {
+            roomUsernames[data.room] = [];
+        }
+        roomUsernames[data.room].push(data.username);
+        io.to(data.room).emit('update_user_list', roomUsernames[data.room]);
+    });
+
+    socket.on('send_msg', (data) => {
+        socket.to(data.room).emit('recieve_msg', data);
+    });
+
+    socket.on('leave_room', (data) => {
+        console.log(`User ${socket.id} leaving room ${data.room}`);
+        const index = roomUsernames[data.room]?.indexOf(data.username);
+        if (index !== -1) {
+            roomUsernames[data.room].splice(index, 1);
+
+            io.to(data.room).emit('update_user_list', roomUsernames[data.room]);
+        }
+    });
+
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected', socket.id);
+    });
+});
 
 server.listen(3001,() => {
     console.log('Server running')
