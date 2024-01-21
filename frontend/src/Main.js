@@ -10,7 +10,7 @@ function Main() {
             <Router>
                 <Routes>
                     <Route path='/'element={<App />} />
-                    <Route path='/room/:id'element={<Chat />} />
+                    <Route path='/room'element={<Chat />} />
                 </Routes>
             </Router>
         </div>

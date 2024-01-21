@@ -13,10 +13,6 @@ function App({navigation}) {
   const [room,setRoom] = useState('')
   const [showChat,setShowChat] = useState(false)
 
-  const delay = ms => new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
-
   const joinRoom = () => {
     if(userName !== '' && room !== '') {
       console.log(room)
