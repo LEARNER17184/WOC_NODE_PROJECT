@@ -27,7 +27,7 @@ function App({navigation}) {
 
   const createRoom = () => {
     if (userName !== '') {
-      const newRoom = Math.floor(Math.random() * 100).toString();
+      const newRoom = Math.floor(Math.random() * 10000).toString();
       setRoom(newRoom);
       const data={
         room: newRoom,

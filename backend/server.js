@@ -36,6 +36,19 @@ io.on('connection', (socket) => {
         socket.to(data.room).emit('recieve_msg', data);
     });
 
+    socket.on('draw', (data) => {
+        socket.to(data.room).emit('draw', data);
+    });
+
+    socket.on('brush_size_change', ({ room, size }) => {
+        socket.to(room).emit('brush_size_change', { size });
+    });
+
+    // Handle brush color change
+    socket.on('brush_color_change', ({ room, color }) => {
+        socket.to(room).emit('brush_color_change', { color });
+    });
+
     socket.on('leave_room', (data) => {
         console.log(`User ${socket.id} leaving room ${data.room}`);
         const index = roomUsernames[data.room]?.indexOf(data.username);
@@ -46,6 +59,9 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('clear_canvas', ({ room }) => {
+        io.to(room).emit('clear_canvas');
+    });
 
     socket.on('disconnect', () => {
         console.log('user disconnected', socket.id);
