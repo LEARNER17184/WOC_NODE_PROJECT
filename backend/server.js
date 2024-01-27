@@ -28,7 +28,11 @@ io.on('connection', (socket) => {
         if (!roomUsernames[data.room]) {
             roomUsernames[data.room] = [];
         }
-        roomUsernames[data.room].push(data.username);
+
+        if (!roomUsernames[data.room].includes(data.username)) {
+            roomUsernames[data.room].push(data.username);
+        }
+        // roomUsernames[data.room].push(data.username);
         io.to(data.room).emit('update_user_list', roomUsernames[data.room]);
     });
 
@@ -38,13 +42,15 @@ io.on('connection', (socket) => {
 
     socket.on('draw', (data) => {
         socket.to(data.room).emit('draw', data);
+
+        const drawingState = data/* Get the initial drawing state for the room */;
+        socket.emit('initial_drawing_state', drawingState);
     });
 
     socket.on('brush_size_change', ({ room, size }) => {
         socket.to(room).emit('brush_size_change', { size });
     });
 
-    // Handle brush color change
     socket.on('brush_color_change', ({ room, color }) => {
         socket.to(room).emit('brush_color_change', { color });
     });

@@ -18,6 +18,10 @@ function Chat({room,username,socket,setShowChat,showChat}) {
     const handleClearCanvas = () => {
         contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         socket.emit('clear_canvas', { room });
+        const clearedCanvasState = {
+            cleared: true,
+        };
+        localStorage.setItem('drawingState', JSON.stringify(clearedCanvasState));
     };
 
     useEffect(() => {
@@ -77,7 +81,25 @@ function Chat({room,username,socket,setShowChat,showChat}) {
         const { offsetX, offsetY } = e.nativeEvent;
         contextRef.current.lineTo(offsetX, offsetY);
         contextRef.current.stroke();
-        socket.emit('draw', { x: offsetX, y: offsetY, type: 'mousemove',room, brushSize, brushColor  });
+        socket.emit('draw', { x: offsetX, y: offsetY, type: 'mousemove', room, brushSize, brushColor });
+    
+        // Save drawing state to local storage
+        const drawingState = {
+            x: offsetX,
+            y: offsetY,
+            type: 'mousemove',
+            brushSize,
+            brushColor,
+        };
+    
+        // Retrieve existing drawing states from local storage
+        const existingDrawingStates = JSON.parse(localStorage.getItem('drawingStates')) || [];
+    
+        // Add the current drawing state to the existing states
+        const updatedDrawingStates = [...existingDrawingStates, drawingState];
+    
+        // Save the updated drawing states back to local storage
+        localStorage.setItem('drawingStates', JSON.stringify(updatedDrawingStates));
     };
 
     const handleBrushSizeChange = (size) => {
@@ -91,6 +113,7 @@ function Chat({room,username,socket,setShowChat,showChat}) {
         setBrushColor(color);
         contextRef.current.strokeStyle = color;
         socket.emit('brush_color_change', { room, color });
+        localStorage.setItem('brushColor', color);
     };
 
     const sendMessage = async () => {
@@ -101,10 +124,14 @@ function Chat({room,username,socket,setShowChat,showChat}) {
                 room: room,
                 time: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes()
             }
-            await socket.emit('send_msg', messageData)
-            setMessageList((list) => [...list, messageData])
-            console.log(messageData)
-            setcurrentMessage('')
+            await socket.emit('send_msg', messageData);
+            setMessageList((list) => [...list, messageData]);
+            setcurrentMessage('');
+    
+            // Save messages to local storage
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push(messageData);
+            localStorage.setItem('messages', JSON.stringify(messages));
         }
     }
 
@@ -114,12 +141,67 @@ function Chat({room,username,socket,setShowChat,showChat}) {
         socket.emit('leave_room', { room, username });
         setShowChat(!showChat)
         navigate('/')
+
+        Object.keys(localStorage).forEach((key) => {
+            localStorage.removeItem(key);
+        });
     }
 
     useEffect(() => {
+        const storedColor = localStorage.getItem('brushColor');
+        if (storedColor) {
+            setBrushColor(storedColor);
+            contextRef.current.strokeStyle = storedColor;
+        }
+        const storedDrawingState = localStorage.getItem('drawingState');
+        if (storedDrawingState) {
+            const parsedState = JSON.parse(storedDrawingState);
+            // Apply the drawing state (either redraw or keep cleared)
+            if (parsedState.cleared) {
+                contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            } else {
+                contextRef.current.beginPath();
+                contextRef.current.moveTo(parsedState.x, parsedState.y);
+                contextRef.current.lineTo(parsedState.x, parsedState.y);
+                contextRef.current.stroke();
+            }
+        }
+
+    },[])
+
+    useEffect(() => {
+        socket.on('initial_drawing_state', (drawingState) => {
+            if (drawingState && drawingState.x && drawingState.y && drawingState.type) {
+                const { x, y, type, brushSize, brushColor } = drawingState;
+                if (type === 'mousedown') {
+                    contextRef.current.beginPath();
+                    contextRef.current.moveTo(x, y);
+                } else if (type === 'mousemove') {
+                    contextRef.current.lineTo(x, y);
+                    contextRef.current.stroke();
+                }
+            }
+        });
+
+        const savedDrawingStates = JSON.parse(localStorage.getItem('drawingStates')) || [];
+        savedDrawingStates.forEach((drawingState) => {
+            const { x, y, type, brushSize, brushColor } = drawingState;
+            if (type === 'mousedown') {
+                contextRef.current.beginPath();
+                contextRef.current.moveTo(x, y);
+            } else if (type === 'mousemove') {
+                contextRef.current.lineTo(x, y);
+                contextRef.current.stroke();
+            }
+        });
+
+        const savedMessages = JSON.parse(localStorage.getItem('messages')) || [];
+        setMessageList(savedMessages);
+
         socket.on('recieve_msg', (data) => {
             setMessageList((list) => [...list, data])
         });
+
 
         socket.on('update_user_list', (userList) => {
             setUserList(userList);

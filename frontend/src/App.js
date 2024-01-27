@@ -2,16 +2,22 @@ import './App.css';
 import Card from '@mui/material/Card';
 import Chat from './Chat';
 import io from 'socket.io-client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const socket = io.connect('http://localhost:3001')
 
 
 function App({navigation}) {
 
-  const [userName,setUserName] = useState('')
-  const [room,setRoom] = useState('')
-  const [showChat,setShowChat] = useState(false)
+  const [userName, setUserName] = useState(localStorage.getItem('userName') || '');
+  const [room, setRoom] = useState(localStorage.getItem('room') || '');
+  const [showChat, setShowChat] = useState(localStorage.getItem('showChat') === 'true' || false);
+
+  useEffect(() => {
+    if (showChat) {
+      joinRoom();
+    }
+  }, []);
 
   const joinRoom = () => {
     if(userName !== '' && room !== '') {
@@ -38,6 +44,12 @@ function App({navigation}) {
       setShowChat(true);
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('room', room);
+    localStorage.setItem('showChat', showChat);
+  }, [userName, room, showChat]);
 
   return (
     <div className='App'>
